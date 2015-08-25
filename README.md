@@ -32,4 +32,11 @@ the only one I own.
 
 >>> modem.load()
 [<HuaweiE303Modem enp0s20u1 (/sys/bus/usb/devices/1-1)>]
+
+>>> modems = modem.load()
+>>> modems[0].get_status()
+{
+    'signal': 80,
+    'status': 'connected'
+}
 ```
