@@ -39,7 +39,14 @@ class HuaweiE303Modem:
 
     def get_messages(self):
         raw = self._api_post("/sms/sms-list",
-                             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request><PageIndex>1</PageIndex><ReadCount>20</ReadCount><BoxType>1</BoxType><SortType>0</SortType><Ascending>0</Ascending><UnreadPreferred>0</UnreadPreferred></request>")
+                             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request>"
+                             "<PageIndex>1</PageIndex>"
+                             "<ReadCount>20</ReadCount>"
+                             "<BoxType>1</BoxType>"
+                             "<SortType>0</SortType>"
+                             "<Ascending>0</Ascending>"
+                             "<UnreadPreferred>0</UnreadPreferred>"
+                             "</request>")
         messages = []
         for message in raw['Messages']['Message']:
             sms = SMSMessage()
