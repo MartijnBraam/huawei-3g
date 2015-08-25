@@ -27,12 +27,35 @@ def find():
                     "supported": True,
                     "productId": product_id,
                     "name": supported_dongles[product_id]["name"],
-                    "class": supported_dongles[product_id]["class"]
+                    "class": supported_dongles[product_id]["class"],
+                    "interface": find_interface(sysfs_path)
                 })
             else:
                 result.append({
                     "path": sysfs_path,
                     "supported": False,
-                    "productId": product_id
+                    "productId": product_id,
+                    "interface": find_interface(sysfs_path)
                 })
+    return result
+
+
+def find_interface(sysfs_device_path):
+    sysfs_device = os.path.realpath(sysfs_device_path)
+    for interface in glob.glob("/sys/class/net/*"):
+        device_symlink = os.path.join(interface, "device")
+        device_endpoint = os.path.realpath(device_symlink)
+        if sysfs_device in device_endpoint:
+            return os.path.basename(interface)
+    return None
+
+
+def load():
+    result = []
+    modems = find()
+    for modem in modems:
+        if modem['supported']:
+            if modem['class'] == 'huawei_e303':
+                import huawei_3g.huawei_e303
+                result.append(huawei_3g.huawei_e303.HuaweiE303Modem(modem["interface"], modem["path"]))
     return result
