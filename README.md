@@ -5,6 +5,8 @@
 A python module for controlling Huawei 3G usb modems. At the moment it only supports the Huawei E303 usb dongle since that's
 the only one I own.
 
+**Warning: huawei modems might mangle sms messages containing CDATA xml sections. Beware if you use this to communicate over XML**
+
 ## Features
 
 - [x] Find all Huawei modems and associated network interface
@@ -37,7 +39,8 @@ the only one I own.
 >>> modems[0].get_status()
 {
     'signal': 80,
-    'status': 'connected'
+    'status': 'connected',
+    'network_type': 'HSPA+'
 }
 
 >>> modem[0].get_message_count()
