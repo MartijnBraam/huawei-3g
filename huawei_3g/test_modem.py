@@ -1,6 +1,7 @@
 from unittest import TestCase
 from mock import Mock, patch
-from huawei_3g.modem import find
+import huawei_3g.modem as modem
+import huawei_3g.huawei_e303
 
 
 class TestFind(TestCase):
@@ -12,7 +13,7 @@ class TestFind(TestCase):
                                        '/sys/bus/usb/devices/usb2/idVendor']
 
         mock_open_call.side_effect = self.open_mocker
-        result = find()
+        result = modem.find()
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]['path'], '/sys/bus/usb/devices/1-1')
         self.assertEqual(result[0]['productId'], '14dc')
@@ -22,6 +23,18 @@ class TestFind(TestCase):
         self.assertEqual(result[1]['path'], '/sys/bus/usb/devices/1-8')
         self.assertEqual(result[1]['productId'], '15dc')
         self.assertEqual(result[1]['supported'], False)
+
+    @patch('builtins.open')
+    @patch('glob.glob')
+    def test_load(self, mock_glob, mock_open_call):
+        mock_glob.return_value = ['/sys/bus/usb/devices/1-5/idVendor', '/sys/bus/usb/devices/1-1/idVendor',
+                                       '/sys/bus/usb/devices/1-8/idVendor', '/sys/bus/usb/devices/usb1/idVendor',
+                                       '/sys/bus/usb/devices/usb2/idVendor']
+
+        mock_open_call.side_effect = self.open_mocker
+        result = modem.load()
+        self.assertEqual(len(result), 1)
+        self.assertIsInstance(result[0], huawei_3g.huawei_e303.HuaweiE303Modem)
 
     def open_mocker(self, filename):
         contents = {

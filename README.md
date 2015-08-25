@@ -18,18 +18,18 @@ the only one I own.
 
 ```python
 >>> from huawei_3g import modem as modem
->>>modem.find()
+>>> modem.find()
 [
     {
-        'name': 'Huawei E303',
+        'name'     : 'Huawei E303',
         'interface': 'enp0s20u1',
-        'path': '/sys/bus/usb/devices/1-1',
+        'path'     : '/sys/bus/usb/devices/1-1',
         'supported': True,
-        'class': 'huawei_e303',
+        'class'    : 'huawei_e303',
         'productId': '14dc'
     }
 ]
 
->>>modem.load()
+>>> modem.load()
 [<HuaweiE303Modem enp0s20u1 (/sys/bus/usb/devices/1-1)>]
 ```
