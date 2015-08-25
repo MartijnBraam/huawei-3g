@@ -49,6 +49,6 @@ the only one I own.
     'unread': 1
 }
 
->>> modem[0].get_messages()
+>>> modem[0].get_messages(delete=False)
 [<SMSMessage ...>, <SMSMessage ...>]
 ```

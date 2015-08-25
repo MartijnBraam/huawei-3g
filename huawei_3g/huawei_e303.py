@@ -11,8 +11,8 @@ class HuaweiE303Modem:
     token = ""
 
     _error_codes = {
-        "100002": "No support",
-        "100003": "Access denied",
+        "100002": "No support",  # Huawei branded 404
+        "100003": "Access denied",  # Huawei branded 403
         "100004": "Busy",
         "108001": "Wrong username",
         "108002": "Wrong password",
@@ -78,7 +78,7 @@ class HuaweiE303Modem:
         self.ip = "192.168.8.1"
         self.base_url = "http://{}/api".format(self.ip)
         self.token = ""
-        #self._get_token()
+        # self._get_token()
 
     def get_status(self):
         status_raw = self._api_get("/monitoring/status")
@@ -99,7 +99,7 @@ class HuaweiE303Modem:
             'unread': int(messages_raw['LocalUnread'])
         }
 
-    def get_messages(self):
+    def get_messages(self, delete=False):
         raw = self._api_post("/sms/sms-list",
                              "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request>"
                              "<PageIndex>1</PageIndex>"
@@ -110,13 +110,31 @@ class HuaweiE303Modem:
                              "<UnreadPreferred>0</UnreadPreferred>"
                              "</request>")
         messages = []
+        if raw['Count'] == '0':
+            return []
         for message in raw['Messages']['Message']:
             sms = SMSMessage()
+            sms.message_id = message['Index']
             sms.message = message['Content']
             sms.sender = message['Phone']
             sms.receive_time = message['Date']
             messages.append(sms)
+        if delete:
+            ids = []
+            for message in messages:
+                ids.append(message.message_id)
+            self.delete_messages(ids)
         return messages
+
+    def delete_message(self, message_id):
+        return self.delete_messages([message_id])
+
+    def delete_messages(self, ids):
+        xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request>"
+        for message_id in ids:
+            xml += "<Index>{}</Index>".format(message_id)
+        xml += "</request>"
+        self._api_post("/sms/delete-sms", xml)
 
     def __repr__(self):
         return "<HuaweiE303Modem {} ({})>".format(self.interface, self.path)
@@ -152,6 +170,8 @@ class HuaweiE303Modem:
         if response.status_code == 200:
             payload = response.content
             parsed = xmltodict.parse(payload)
+
+            # HAHA! HTTP response codes are for the weak!
             if 'response' in parsed:
                 return parsed['response']
             else:
