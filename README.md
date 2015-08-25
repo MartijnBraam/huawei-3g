@@ -8,10 +8,10 @@ the only one I own.
 ## Features
 
 - [x] Find all Huawei modems and associated network interface
-- [ ] Get modem status
+- [x] Get modem status
 - [ ] Connect/disconnect internet
 - [ ] Change sim settings
-- [ ] Get SMS messages
+- [x] Get SMS messages
 - [ ] Send SMS messages
 
 ## Usage example
@@ -39,4 +39,13 @@ the only one I own.
     'signal': 80,
     'status': 'connected'
 }
+
+>>> modem[0].get_message_count()
+{
+    'count' : 2,
+    'unread': 1
+}
+
+>>> modem[0].get_messages()
+[<SMSMessage ...>, <SMSMessage ...>]
 ```
