@@ -112,7 +112,14 @@ class HuaweiE303Modem:
         messages = []
         if raw['Count'] == '0':
             return []
-        for message in raw['Messages']['Message']:
+
+        if raw['Count'] == '1':
+            # why? WHY HUAWEI?
+            message_list = [raw['Messages']['Message']]
+        else:
+            message_list = raw['Messages']['Message']
+
+        for message in message_list:
             sms = SMSMessage()
             sms.message_id = message['Index']
             sms.message = message['Content']
