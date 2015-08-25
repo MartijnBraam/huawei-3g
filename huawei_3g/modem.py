@@ -1,4 +1,4 @@
-from glob import glob
+import glob
 import os.path
 
 
@@ -11,7 +11,7 @@ def find():
             "class": "huawei_e303"
         }
     }
-    for device in glob("/sys/bus/usb/devices/*/idVendor"):
+    for device in glob.glob("/sys/bus/usb/devices/*/idVendor"):
         with open(device) as vendor_file:
             vendor_id = vendor_file.read().strip()
         if vendor_id == huawei_vendor:
