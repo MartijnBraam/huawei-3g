@@ -1,11 +1,11 @@
-from unittest import TestCase, mock
-from unittest.mock import mock_open, Mock
+from unittest import TestCase
+from mock import Mock, patch
 from huawei_3g.modem import find
 
 
 class TestFind(TestCase):
-    @mock.patch('builtins.open')
-    @mock.patch('glob.glob')
+    @patch('builtins.open')
+    @patch('glob.glob')
     def test_find(self, mock_glob, mock_open_call):
         mock_glob.glob.return_value = ['/sys/bus/usb/devices/1-5/idVendor', '/sys/bus/usb/devices/1-7/idVendor',
                                        '/sys/bus/usb/devices/1-8/idVendor', '/sys/bus/usb/devices/usb1/idVendor',
