@@ -1,9 +1,12 @@
 # Huawei 3G python module
 [![Build Status](https://travis-ci.org/MartijnBraam/huawei-3g.svg)](https://travis-ci.org/MartijnBraam/huawei-3g)
+[![PyPI version](https://badge.fury.io/py/huawei_3g.svg)](http://badge.fury.io/py/huawei_3g)
 [![Coverage Status](https://coveralls.io/repos/MartijnBraam/huawei-3g/badge.svg?branch=master&service=github)](https://coveralls.io/github/MartijnBraam/huawei-3g?branch=master)
 
 A python module for controlling Huawei 3G usb modems. At the moment it only supports the Huawei E303 usb dongle since that's
 the only one I own.
+
+If your huawei dongle isn't working, please report an issue. More supported modems is always better.
 
 **Warning: huawei modems might mangle sms messages containing CDATA xml sections. Beware if you use this to communicate over XML**
 
