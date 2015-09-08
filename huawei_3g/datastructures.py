@@ -1,4 +1,5 @@
 class SMSMessage:
+    """A SMS message received by a modem"""
     message_id = ""
     message = ""
     sender = ""
