@@ -9,7 +9,7 @@ class TestHuaweiE303Modem(TestCase):
     @responses.activate
     def test_get_status(self):
         payload = ""
-        with open("fixtures/status.xml") as payload_file:
+        with open("huawei_3g/fixtures/status.xml") as payload_file:
             payload = payload_file.read()
         responses.add(**{
             'method': responses.GET,
@@ -29,7 +29,7 @@ class TestHuaweiE303Modem(TestCase):
     @responses.activate
     def test_get_message_count(self):
         payload = ""
-        with open("fixtures/sms-count.xml") as payload_file:
+        with open("huawei_3g/fixtures/sms-count.xml") as payload_file:
             payload = payload_file.read()
         responses.add(**{
             'method': responses.GET,
@@ -46,7 +46,7 @@ class TestHuaweiE303Modem(TestCase):
 
     @responses.activate
     def test_get_messages(self):
-        with open("fixtures/sms-list-2.xml") as payload_file:
+        with open("huawei_3g/fixtures/sms-list-2.xml") as payload_file:
             payload = payload_file.read()
         responses.add(**{
             'method': responses.POST,
@@ -77,7 +77,7 @@ class TestHuaweiE303Modem(TestCase):
         This is a side effect of the XML parser used.
         :return:
         """
-        with open("fixtures/sms-list-1.xml") as payload_file:
+        with open("huawei_3g/fixtures/sms-list-1.xml") as payload_file:
             payload = payload_file.read()
         responses.add(**{
             'method': responses.POST,
