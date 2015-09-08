@@ -9,6 +9,7 @@ class TokenError(Exception):
 
 
 class HuaweiE303Modem:
+    """ This class abstracts the communication with a Huawei HiLink E303 modem"""
     token = ""
 
     _error_codes = {
@@ -74,6 +75,11 @@ class HuaweiE303Modem:
     }
 
     def __init__(self, interface, sysfs_path):
+        """ Create instance of the HuaweiE303Modem class
+
+        :param interface: The name of the network interface associated with this modem
+        :param sysfs_path: The path in /sys/** that represents this USB device
+        """
         self.interface = interface
         self.path = sysfs_path
         self.ip = "192.168.8.1"
@@ -82,6 +88,20 @@ class HuaweiE303Modem:
         # self._get_token()
 
     def get_status(self):
+        """ Get the status of the attached modem
+
+        This returns the status/connection information of this modem as a dictionary with the following keys:
+
+        status
+          The current status as a string. Mostly "Connected" or "Disconnected" but also might contain an error
+          message if the connection is unsuccessful
+
+        signal
+          The signal strength of the modem as a int representing a percentage
+
+        network_type
+          The protocol used to communicate with the network. Ex: 3G or GPRS
+        """
         status_raw = self._api_get("/monitoring/status")
         signal = int(int(status_raw['SignalIcon']) / 5.0 * 100.0)
         network_type = "Unknown"
@@ -94,6 +114,16 @@ class HuaweiE303Modem:
         }
 
     def get_message_count(self):
+        """ Get the amount of SMS messages on the modem
+
+        Returns the amount of SMS messages stored on the internal memory of the modem as a dictionary
+
+        count
+          The total amount of messages on the modem
+
+        unread
+          The count of messages that arent read yet.
+        """
         messages_raw = self._api_get("/sms/sms-count")
         return {
             'count': int(messages_raw['LocalInbox']),
@@ -101,6 +131,15 @@ class HuaweiE303Modem:
         }
 
     def get_messages(self, delete=False):
+        """ Get all SMS messages stored on the modem
+
+        This receives all SMS messages that are on the internal memory of the modem as
+        :class:`~huawei_3g.datastructures.SMSMessage` instances.
+
+        If you set the delete argument to True then the messages will be deleted after retrieving them with this method.
+
+        :param delete: Delete the messages after this call
+        """
         raw = self._api_post("/sms/sms-list",
                              "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request>"
                              "<PageIndex>1</PageIndex>"
@@ -135,9 +174,20 @@ class HuaweiE303Modem:
         return messages
 
     def delete_message(self, message_id):
+        """ Delete a SMS message from the modem
+
+        This removes a message from the modem by message index. The message index is found in
+        the :class:`~huawei_3g.datastructures.SMSMessage` instance returned
+        by :func:`~huawei_3g.HuaweiE303Modem.get_messages`
+        """
         return self.delete_messages([message_id])
 
     def delete_messages(self, ids):
+        """ Delete multiple SMS messages from the modem
+
+        This does the same thing as :func:`~huawei_3g.HuaweiE303Modem.delete_message` but accepts a list of message
+        indexes to delete them in a single API call.
+        """
         xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><request>"
         for message_id in ids:
             xml += "<Index>{}</Index>".format(message_id)
