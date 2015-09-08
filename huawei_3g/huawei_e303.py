@@ -1,5 +1,6 @@
 import requests
 import xmltodict
+import datetime
 from huawei_3g.datastructures import SMSMessage
 
 
@@ -114,7 +115,6 @@ class HuaweiE303Modem:
             return []
 
         if raw['Count'] == '1':
-            # why? WHY HUAWEI?
             message_list = [raw['Messages']['Message']]
         else:
             message_list = raw['Messages']['Message']
@@ -124,7 +124,8 @@ class HuaweiE303Modem:
             sms.message_id = message['Index']
             sms.message = message['Content']
             sms.sender = message['Phone']
-            sms.receive_time = message['Date']
+            receive_time = message['Date']
+            sms.receive_time = datetime.datetime.strptime(receive_time, '%Y-%m-%d %H:%M:%S')
             messages.append(sms)
         if delete:
             ids = []
@@ -152,7 +153,9 @@ class HuaweiE303Modem:
 
     def _api_get(self, url):
         full_url = self.base_url + url
-        response = requests.get(full_url)
+        response = requests.get(full_url, headers={
+            "__RequestVerificationToken": self.token
+        })
         try:
             return self._parse_api_response(response)
         except TokenError:
